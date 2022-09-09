@@ -3,6 +3,9 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
+// Register Model
+const branchModel = require("./models/branch");
+
 // Path of Environment File
 const env = "dev";
 const envPath = ".env." + env;
@@ -36,7 +39,6 @@ app.use(function rootHandler(req, res, next) {
 // Admin API Paths
 app.use("/api/restaurant", restaurantRoutes);
 app.use("/api/admin", adminRoutes);
-
 
 app.use((req, res, next) => {
   const error = new Error("Resource not found");
