@@ -42,7 +42,7 @@ const updateFields = [
 exports.getBasicinfo = (request, response, next) => {
   const adminDetails = request.tokens.user;
   const filter = { _id: adminDetails._id };
-
+  console.log(filter);
   AdminModel.findOne(filter)
     .populate({
       path: "branch",

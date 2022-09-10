@@ -16,6 +16,9 @@ dotenv.config({
 // Admin Routes
 const restaurantRoutes = require("./routes/restaurant");
 const adminRoutes = require("./routes/admin");
+const branchRoutes = require("./routes/branch");
+const categoryRoutes = require("./routes/category");
+const productRoutes = require("./routes/product");
 
 const cors = require("cors");
 const app = express();
@@ -39,6 +42,9 @@ app.use(function rootHandler(req, res, next) {
 // Admin API Paths
 app.use("/api/restaurant", restaurantRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/branch", branchRoutes);
+app.use("/api/category", categoryRoutes);
+app.use("/api/product", productRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Resource not found");

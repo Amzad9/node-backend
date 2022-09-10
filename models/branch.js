@@ -1,45 +1,63 @@
 const mongoose = require("mongoose");
 
-const branchSchema = mongoose.Schema(
+const Schema = mongoose.Schema(
   {
-    _id: mongoose.Schema.Types.ObjectId,
-    restaurantId: { type: String, required: [true, "RestaurantId required"] },
-    name: { type: String, required: [true, "Branch name required"] },
-    address: { type: String, required: [true, "Address required"] },
-    landmark: { type: String },
-    locality: { type: String, required: [true, "Locality required"] },
-    city: { type: String, required: [true, "City required"] },
-    state: { type: String, required: [true, "State required"] },
-    country: { type: String, required: [true, "Country required"] },
-    pincode: { type: String, required: [true, "Pincode required"] },
-    location: { type: JSON, require: true },
-    contactName: { type: String, require: false },
-    deliveryCharge: { type: mongoose.Schema.Types.Mixed },
-    createdOn: { type: Date, default: Date.now() },
-    status: { type: String, default: "on" },
-    hoursconfiguration: { type: Array, default: [] },
-    disabled: { type: String },
+    restaurant: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "restaurant_setting",
+    },
+    name: { type: String, required: [true, "Name required"] },
+    nameLocalized: { type: String, default: null },
+    reference: { type: String, default: null },
+    address: { type: String, default: null },
+    landmark: { type: String, default: null },
+    locality: { type: String, default: null },
+    city: { type: String, default: null },
+    state: { type: String, default: null },
+    country: { type: String, default: null },
+    pincode: { type: Number, default: null },
+    location: {
+      latitude: { type: Number, default: 0 },
+      longitude: { type: Number, default: 0 },
+    },
+    dialCode: { type: String, required: [true, "Dial code required"] },
+    contact: { type: String, default: null },
+    contactName: { type: String, default: null },
+    deliveryCharge: { type: mongoose.Schema.Types.Mixed, default: null },
+    hoursConfiguration: { type: Array, default: [] },
     deliveryStatus: { type: Boolean, default: false },
     pickupStatus: { type: Boolean, default: false },
-    branchImage: { type: String },
-    minCartAmount: { type: String, default: "0" },
-    maxCashAccepted: { type: Number },
-    image: {
+    image: { type: String, default: null },
+    imageKit: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "imagekit",
       default: null,
     },
-    contact: {
-      type: String,
-      unique: true,
-      required: [true, "Phone number required"],
+    minCartAmount: { type: Number, default: 0 },
+    maxCashAccepted: { type: Number, default: 0 },
+    source: { type: Number, enum: [1, 2], default: 1 },
+    isActive: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "admin",
+      default: null,
     },
-    dialCode: { type: String, required: [true, "Dial code required"] },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "admin" },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "admin",
+      default: null,
+    },
+    deletedAt: { type: Date, default: null },
+    deletedBy: { type: String, default: null },
+    logs: { type: String, default: null },
   },
   {
     timestamps: true,
-  }
+  },
+
 );
 
-module.exports = mongoose.model("branch", branchSchema);
+Schema.index({ restaurant: 1, createdAt: -1 });
+
+module.exports = mongoose.model("branch", Schema);
