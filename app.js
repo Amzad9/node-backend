@@ -25,6 +25,7 @@ const app = express();
 
 // const db = url;
 const db = process.env.MONGOHOST;
+console.log(db);
 mongoose.connect(db, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
