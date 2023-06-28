@@ -13,13 +13,11 @@ const ConstantHelper = require("./../helpers/Constant");
 const CommonHelper = require("./../helpers/Common");
 
 const selectFields =
-  "restaurantId branch name email contact dialCode type settings isActive createdAt isDeleted";
+  "name email contact type isActive createdAt isDeleted";
 const addFields = [
-  "branch",
   "name",
   "email",
   "contact",
-  "dialCode",
   "type",
   "password",
 ];
@@ -87,7 +85,7 @@ exports.getBasicinfo = (request, response, next) => {
 /*
 |  Admin login
 */
-exports.login = (request, response, next) => {
+exports.login = (request, response) => {
   const password = md5(request.body.password);
   const filter = {
     contact: request.body.contact,
@@ -95,30 +93,18 @@ exports.login = (request, response, next) => {
   };
 
   AdminModel.findOne(filter)
-    .populate({
-      path: "settings",
-      select: "restaurantId restaurantName status integration tag",
-      populate: {
-        path: "integration",
-        select: "name slug additionalData isActive isDeleted",
-      },
-    })
-    .select(
-      "restaurantId name email contact type branch isActive status settings"
-    )
+    .select(selectFields)
     .then((user) => {
-      console.log(user);
       if (!user)
         return response.status(401).json({ message: "Authentication failed." });
-      else if (user.type === "owner" || user.type === "manager" || user.type === "driver") {
-        if (user.settings.status === "Inactive")
-          return response.status(409).json({
-            message:
-              "Your login has been restricted please contact your account administrator.",
-          });
-      }
+
+      if (user.isActive === "Inactive")
+        return response.status(409).json({
+          message:
+            "Your login has been restricted please contact your account administrator.",
+        });
+
       const userData = user.toObject(); // Can't modify mongoose doc, hence converting to plain object
-      if (!userData.settings) userData.settings = { rejectionNotes: [] }; // Required for showing rejection notes
 
       const token = jwt.sign(
         {
@@ -206,16 +192,6 @@ exports.list = async (request, response, next) => {
 */
 exports.addUser = async (request, response, next) => {
   try {
-    if (
-      !(
-        request.tokens.user.type === "owner" ||
-        request.tokens.user.type === "manager"
-      )
-    )
-      return response
-        .status(ConstantHelper.HttpCodeAndMessage["FORBIDDEN"].code)
-        .json({ message: ConstantHelper.HttpCodeAndMessage["FORBIDDEN"].en });
-
     for (let key in request.body) {
       if (addFields.findIndex((v) => v === key) === -1) {
         return response
@@ -234,11 +210,8 @@ exports.addUser = async (request, response, next) => {
         .json({ message: "Contact number already exists." });
 
     request.body["_id"] = new mongoose.Types.ObjectId();
-    request.body["restaurantId"] = request.tokens.user.settings.restaurantId;
-    request.body["auth"] = Math.random().toString(36).slice(2);
     request.body["password"] = md5(request.body.password);
-    request.body["settings"] = request.tokens.user.settings._id;
-    request.body["createdBy"] = request.tokens.user._id;
+    request.body["createdBy"] = request.body["_id"];
 
     const result = await AdminService.add(request.body);
     return response.status(201).json({

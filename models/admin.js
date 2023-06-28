@@ -1,19 +1,8 @@
 const mongoose = require("mongoose");
 
-const adminSchema = mongoose.Schema(
+const Schema = mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
-    auth: { type: String, default: null },
-    branch: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "branch",
-      default: null,
-    },
-    settings: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "restaurant_setting",
-      default: null,
-    },
     name: { type: String, required: [true, "Name is required"] },
     email: { type: String, default: null },
     contact: {
@@ -21,10 +10,9 @@ const adminSchema = mongoose.Schema(
       unique: true,
       required: [true, "Phone number required"],
     },
-    dialCode: { type: String, required: [true, "Dial code required."] },
     type: {
       type: String,
-      enum: ["owner", "manager", "driver", "support"],
+      enum: ["super_admin", "admin", "support"],
     },
     password: { type: String, required: [true, "Password cannot be empty."] },
     isActive: { type: Boolean, default: true },
@@ -42,6 +30,6 @@ const adminSchema = mongoose.Schema(
   }
 );
 
-adminSchema.index({ settings: 1, createdAt: -1 });
+Schema.index({ contact: 1, createdAt: -1 });
 
-module.exports = mongoose.model("admin", adminSchema);
+module.exports = mongoose.model("admin", Schema);
