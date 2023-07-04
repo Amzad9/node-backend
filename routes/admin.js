@@ -8,7 +8,7 @@ router.get("/getBasicinfo", checkAuth, AdminController.getBasicinfo);
 
 router.post("/login", AdminController.login);
 
-router.get("/", checkAuth, AdminController.list);
+router.get("/", AdminController.list);
 router.post("/", AdminController.addUser);
 router.put("/", checkAuth, AdminController.editUser);
 router.delete("/", checkAuth, Delete.deleteData, AdminController.editUser);

@@ -133,29 +133,29 @@ exports.login = (request, response) => {
 exports.list = async (request, response, next) => {
   try {
     const filter = {};
-    switch (request.tokens.user.type || 'owner') {
-      case "support":
-        if (request.query.restaurant)
-          filter["settings"] = request.query.restaurant;
-        break;
+    // switch (request.tokens.user.type || 'owner') {
+    //   case "support":
+    //     if (request.query.restaurant)
+    //       filter["settings"] = request.query.restaurant;
+    //     break;
 
-      case "owner":
-        filter["settings"] = request.tokens.user.settings._id;
-        break;
+    //   case "owner":
+    //     filter["settings"] = request.tokens.user.settings._id;
+    //     break;
 
-      case "manager":
-        filter["_id"] = request.tokens.user.branch._id;
-        break;
-    }
-    if (request.query.type) filter["type"] = request.query.type;
+    //   case "manager":
+    //     filter["_id"] = request.tokens.user.branch._id;
+    //     break;
+    // }
+    // if (request.query.type) filter["type"] = request.query.type;
 
-    const totalRecords = await AdminService.findAll(filter);
+    const totalRecords = await AdminService.findAll();
 
     const populate = [
-      {
-        path: "branch",
-        select: "name nameLocalized reference",
-      },
+      // {
+      //   path: "branch",
+      //   select: "name nameLocalized reference",
+      // },
     ];
 
     const limit = parseInt(request.query.limit ? request.query.limit : 10, 10);
