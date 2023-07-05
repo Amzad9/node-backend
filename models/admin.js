@@ -3,12 +3,17 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema(
   {
     _id: mongoose.Schema.Types.ObjectId,
-    name: { type: String, required: [true, "Name is required"] },
+    firstName: { type: String, required: [true, "First name is required"] },
+    lastName: { type: String },
     email: { type: String, default: null },
     contact: {
       type: String,
       unique: true,
       required: [true, "Phone number required"],
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
     },
     type: {
       type: String,

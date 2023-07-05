@@ -13,11 +13,13 @@ const ConstantHelper = require("./../helpers/Constant");
 const CommonHelper = require("./../helpers/Common");
 
 const selectFields =
-  "name email contact type isActive createdAt isDeleted";
+  "firstName lastName email contact gender type isActive createdAt isDeleted";
 const addFields = [
-  "name",
+  "firstName",
+  "lastName",
   "email",
   "contact",
+  "gender",
   "type",
   "password",
 ];
