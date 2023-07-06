@@ -10,7 +10,7 @@ dotenv.config();
 
 const AdminService = require("../service/Admin");
 const ConstantHelper = require("../helpers/constant");
-const CommonHelper = require("../helpers/Common");
+const CommonHelper = require("../helpers/common");
 
 const selectFields =
   "firstName lastName email contact gender type isActive createdAt isDeleted";
