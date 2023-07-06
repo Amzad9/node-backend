@@ -1,4 +1,4 @@
-const Constant = require("./../helpers/Constant");
+const Constant = require("./../helpers/constant");
 
 function padZero(value) {
   let pad = "";
