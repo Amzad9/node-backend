@@ -9,7 +9,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const AdminService = require("../service/Admin");
-const ConstantHelper = require("../helpers/Constant");
+const ConstantHelper = require("../helpers/constant");
 const CommonHelper = require("../helpers/Common");
 
 const selectFields =
