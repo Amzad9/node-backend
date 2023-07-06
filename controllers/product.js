@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Service = require("./../service/Product");
 const CategoryService = require("./../service/Category");
-const ConstantHelper = require("./../helpers/Constant");
-const CommonHelper = require("./../helpers/Common");
+const ConstantHelper = require("./../helpers/constant");
+const CommonHelper = require("./../helpers/common");
 
 
 const addFields = ['name', 'nameLocalized', 'category', 'price', 'calories', 'sku'];

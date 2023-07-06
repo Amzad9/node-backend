@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const Service = require("./../service/Category");
-const CommonHelper = require("./../helpers/Common");
-const ConstantHelper = require("./../helpers/Constant");
+const CommonHelper = require("./../helpers/common");
+const ConstantHelper = require("./../helpers/constant");
 
 const selectFields = 'name nameLocalized description descriptionLocalized source order isActive createdAt isDeleted';
 const populate = [

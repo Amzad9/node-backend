@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Service = require("./../service/Branch");
-const CommonHelper = require("./../helpers/Common");
-const ConstantHelper = require("./../helpers/Constant");
+const CommonHelper = require("./../helpers/common");
+const ConstantHelper = require("./../helpers/constant");
 
 const project =
   "name nameLocalized landmark address location locality city state country pincode dialCode contact contactName deliveryCharge hoursConfiguration deliveryStatus pickupStatus image imageKit minCartAmount maxCashAccepted isActive createdAt";
