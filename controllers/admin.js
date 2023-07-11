@@ -230,14 +230,9 @@ exports.addUser = async (request, response, next) => {
 */
 exports.userDetail = async (request, response, next) => {
   try {
-    const filter = { _id: request.query._id };
-    const populate = [
-      {
-        path: "branch",
-        select: "name nameLocalized reference",
-      },
-    ];
-    const user = await AdminService.findOne(filter, selectFields, populate);
+    const filter = { _id: request.params._id };
+    console.log(filter);
+    const user = await AdminService.findOne(filter, selectFields);
 
     const res = CommonHelper.formatResponse({
       action: "findOne",

@@ -5,8 +5,8 @@ const ConstantHelper = require("./../helpers/constant");
 const CommonHelper = require("./../helpers/common");
 
 
-const addFields = ['name', 'nameLocalized', 'category', 'price', 'calories', 'sku'];
-const updateFields = ['name', 'nameLocalized', 'description', 'descriptionLocalized', 'preparationTime', 'oldCategory', 'category', 'price', 'calories', 'sku', 'image', 'coverImage', 'isActive', 'bestSeller', 'isDeleted', 'deletedAt', 'deletedBy'];
+const addFields = ['name', 'description', 'retailPrice', 'sellingPrice', 'size', 'color', 'discount', 'material', 'category', 'offers', 'brands'];
+const updateFields = ['name', 'nameLocalized', 'description', 'descriptionLocalized', 'preparationTime', 'oldCategory', 'category', 'price', 'calories', 'sku', 'image', 'coverImage', 'isActive', 'bestSeller', 'reviews', 'isDeleted', 'deletedAt', 'deletedBy'];
 
 const project = "category branches modifiers sku name nameLocalized description descriptionLocalized image coverImage price calories preparationTime sellingMethod isActive isDeleted bestSeller createdAt";
 const populate = [
