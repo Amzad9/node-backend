@@ -135,7 +135,7 @@ exports.login = (request, response) => {
 */
 exports.list = async (request, response, next) => {
   try {
-    const filter = {};
+    const filter = {isDeleted: false};
     // switch (request.tokens.user.type || 'owner') {
     //   case "support":
     //     if (request.query.restaurant)
