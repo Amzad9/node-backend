@@ -24,11 +24,12 @@ const addFields = [
   "password",
 ];
 const updateFields = [
-  "branch",
-  "name",
+  "firstName",
+  "lastName",
   "email",
   "contact",
-  "dialCode",
+  "gender",
+  "type",
   "password",
   "isActive",
   "isDeleted",
@@ -259,24 +260,24 @@ exports.editUser = async (request, response, next) => {
       }
     }
 
-    const filter = { _id: request.query._id };
+    const filter = { _id: request.params._id };
     const exist = await AdminService.findOne(filter, "_id");
     if (!exist)
       return response
         .status(ConstantHelper.HttpCodeAndMessage["NOT_FOUND"].code)
         .json({ message: ConstantHelper.HttpCodeAndMessage["NOT_FOUND"].en });
 
-    const contactFilter = {
-      _id: { $ne: request.query._id },
-      contact: request.body.contact,
-    };
-    const contactExist = await AdminService.findOne(contactFilter, "_id");
-    if (contactExist)
-      return response
-        .status(ConstantHelper.HttpCodeAndMessage["EXIST"].code)
-        .json({ message: ConstantHelper.HttpCodeAndMessage["EXIST"].en });
+    // const contactFilter = {
+    //   _id: { $ne: request.params._id },
+    //   contact: request.body.contact,
+    // };
+    // const contactExist = await AdminService.findOne(contactFilter, "_id");
+    // if (contactExist)
+    //   return response
+    //     .status(ConstantHelper.HttpCodeAndMessage["EXIST"].code)
+    //     .json({ message: ConstantHelper.HttpCodeAndMessage["EXIST"].en });
 
-    request.body["updatedBy"] = request.tokens.user._id;
+    // request.body["updatedBy"] = request.tokens.user._id;
 
     const result = await AdminService.updateOne(filter, request.body);
     const res = CommonHelper.formatResponse({ action: "updateOne", result });

@@ -2,7 +2,7 @@
 module.exports.deleteData = (req, res, next) => {
     req.body['isActive'] = false;
     req.body['isDeleted'] = true;
-    req.body['deletedBy'] = req.tokens.user._id;
+    // req.body['deletedBy'] = req.tokens.user._id;
     req.body['deletedAt'] = Date.now();
   
     next();
