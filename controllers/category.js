@@ -4,15 +4,15 @@ const Service = require("./../service/Category");
 const CommonHelper = require("./../helpers/common");
 const ConstantHelper = require("./../helpers/constant");
 
-const selectFields = 'name nameLocalized description descriptionLocalized source order isActive createdAt isDeleted';
+const selectFields = 'name description image isActive createdAt isDeleted';
 const populate = [
   {
     path: 'products',
-    select: 'name nameLocalized'
+    select: 'name'
   }
 ];
-const addFields = ['name', 'nameLocalized', 'description', 'descriptionLocalized'];
-const updateFields = ['name', 'nameLocalized', 'description', 'descriptionLocalized', 'order', 'reference', 'isActive', 'isDeleted'];
+const addFields = ['name', 'description', 'image'];
+const updateFields = ['name', 'description', 'image', 'isActive', 'isDeleted', 'deletedAt'];
 
 /*
   Category List
@@ -31,7 +31,6 @@ exports.list = async (request, response, next) => {
     };
 
     const filter = {
-      restaurant: request.tokens.user.settings._id,
       isDeleted: false
     };
     const totalRecords = await Service.findAll(filter);
@@ -49,11 +48,11 @@ exports.list = async (request, response, next) => {
 };
 
 /*
-  Category List
+  Category Detail
 */
 exports.detail = async (request, response, next) => {
   try {
-    const filter = {_id: request.query._id}
+    const filter = {_id: request.params._id, isDeleted: false}
     const result = await Service.findOne(filter);
 
     return response.status(200).json({ message: 'Category detail.', payload: result });
@@ -77,14 +76,7 @@ exports.add = async (request, response, next) => {
       };
     }
 
-    const filter = {restaurant: request.tokens.user.settings._id}
-    const totalCategory = await Service.findAll(filter, '_id');
-
     request.body['_id'] = new mongoose.Types.ObjectId;
-    request.body['restaurant'] = request.tokens.user.settings._id;
-    request.body['order'] = totalCategory.length + 1;
-    request.body['createdBy'] = request.tokens.user._id;
-    request.body["reference"] = "C" + CommonHelper.pad(totalCategory.length + 1, 2);
 
     const result = await Service.add(request.body);
     return response.status(201).json({
@@ -111,14 +103,12 @@ exports.edit = async (request, response, next) => {
       };
     }
 
-    const filter = { _id: request.query._id };
+    const filter = { _id: request.params._id };
     const exist = await Service.findOne(filter);
     if (!exist)
       return response
         .status(ConstantHelper.HttpCodeAndMessage['NOT_FOUND'].code)
         .json({ message: ConstantHelper.HttpCodeAndMessage['NOT_FOUND'].en });
-
-    request.body['updatedBy'] = request.tokens.user._id;
 
     const result = await Service.updateOne(filter, request.body, {new: true});
     return response.status(200).json({ message: 'Category updated', payload: result });
