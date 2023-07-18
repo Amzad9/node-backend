@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.get("/", AdminController.list);
 router.post("/", AdminController.addUser);
-router.put("/", AdminController.editUser);
-router.delete("/:_id", Delete.deleteData, AdminController.editUser);
 router.get("/:_id", AdminController.userDetail);
+router.put("/:_id", AdminController.editUser);
+router.delete("/:_id", Delete.deleteData, AdminController.editUser);
 
 router.get("/getBasicinfo", checkAuth, AdminController.getBasicinfo);
 

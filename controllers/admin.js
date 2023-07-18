@@ -27,7 +27,6 @@ const updateFields = [
   "firstName",
   "lastName",
   "email",
-  "contact",
   "gender",
   "type",
   "password",
