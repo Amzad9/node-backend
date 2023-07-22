@@ -34,12 +34,14 @@ app.use(function rootHandler(req, res, next) {
 const adminRoutes = require("./routes/admin");
 const categoryRoutes = require("./routes/category");
 const subCategoryRoutes = require("./routes/subCategory");
+const couponRoutes = require("./routes/coupon");
 const productRoutes = require("./routes/product");
 
 // Admin API Paths
 app.use("/api/admin", adminRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/subCategory", subCategoryRoutes);
+app.use("/api/coupon", couponRoutes);
 app.use("/api/product", productRoutes);
 
 app.use((req, res, next) => {
