@@ -4,35 +4,14 @@ const CategoryService = require("./../service/Category");
 const ConstantHelper = require("./../helpers/constant");
 const CommonHelper = require("./../helpers/common");
 
+const addFields = ['category', 'name', 'maximumPrice', 'sellingPrice', 'description', 'sellingMethod', 'costingMethod', 'bestSeller', 'inStock', 'sizes', 'colors', 'coupons', 'materials', 'brands', 'reviews'];
+const updateFields = ['category', 'name', 'maximumPrice', 'sellingPrice', 'description', 'sellingMethod', 'costingMethod', 'bestSeller', 'inStock', 'sizes', 'colors', 'coupons', 'materials', 'brands', 'reviews', 'image', 'coverImage', 'isActive', 'isDeleted', 'deletedAt', 'deletedBy'];
 
-const addFields = ['name', 'description', 'retailPrice', 'sellingPrice', 'size', 'color', 'discount', 'material', 'category', 'offers', 'brands'];
-const updateFields = ['name', 'nameLocalized', 'description', 'descriptionLocalized', 'preparationTime', 'oldCategory', 'category', 'price', 'calories', 'sku', 'image', 'coverImage', 'isActive', 'bestSeller', 'reviews', 'isDeleted', 'deletedAt', 'deletedBy'];
-
-const project = "category branches modifiers sku name nameLocalized description descriptionLocalized image coverImage price calories preparationTime sellingMethod isActive isDeleted bestSeller createdAt";
+const project = "category name description image coverImage maximumPrice sellingPrice sellingMethod costingMethod bestSeller inStock sizes colors coupons materials brands reviews isActive isDeleted createdAt";
 const populate = [
   {
     path: "category",
-    select: "name nameLocalized",
-  },
-  {
-    path: "branches",
-    populate: [
-      {
-        path: "branch",
-        select: 'name nameLocalized reference'
-      }
-    ],
-  },
-  {
-    path: "modifiers.modifier",
-    select: "name nameLocalized  options isDeleted isActive",
-    match: { isActive: true, isDeleted: false },
-    populate: [
-      {
-        path: "options",
-        select: "name nameLocalized  sku price calories costingMethod",
-      }
-    ]
+    select: "name",
   },
   {
     path: "imageKit",
@@ -45,12 +24,11 @@ const populate = [
 ];
 
 /*
-  Item List
+  Product List
 */
-exports.list = async (request, response, next) => {
+exports.list = async (request, response) => {
   try {
-    const user = request.tokens.user;
-    const filter = { restaurant: user.settings._id, isDeleted: false };
+    const filter = { isDeleted: false };
 
     const totalRecords = await Service.findAll(filter, '_id');
 
@@ -68,7 +46,7 @@ exports.list = async (request, response, next) => {
 
     const res = await Service.findAll(filter, project, option, populate);
     return response.status(200).json({
-      message: "Item list",
+      message: "Product list",
       payload: res,
       totalRecords: totalRecords.length,
     });
@@ -80,18 +58,8 @@ exports.list = async (request, response, next) => {
 /*
 |   Add product
 */
-exports.add = async (request, response, next) => {
+exports.add = async (request, response) => {
   try {
-    if (
-      !(
-        request.tokens.user.type === "owner" ||
-        request.tokens.user.type === "manager"
-      )
-    )
-      return response
-        .status(ConstantHelper.HttpCodeAndMessage["FORBIDDEN"].code)
-        .json({ message: ConstantHelper.HttpCodeAndMessage["FORBIDDEN"].en });
-
     for (let key in request.body) {
       if (addFields.findIndex((v) => v === key) === -1) {
         return response
@@ -100,12 +68,7 @@ exports.add = async (request, response, next) => {
       }
     }
 
-    const totalBranch = await Service.findAll({});
-
     request.body["_id"] = new mongoose.Types.ObjectId();
-    request.body["restaurant"] = request.tokens.user.settings._id;
-    request.body["createdBy"] = request.tokens.user._id;
-    if (!request.body["sku"]) request.body["sku"] = "sk-" + CommonHelper.pad(totalBranch.length + 1, 4);
 
     const result = await Service.add(request.body);
     const addedData = await Service.findOne({ _id: result._id }, project, populate);
@@ -122,19 +85,14 @@ exports.add = async (request, response, next) => {
 };
 
 /*
-|   Item detail
+|   Product detail
 */
-exports.detail = async (request, response, next) => {
+exports.detail = async (request, response) => {
   try {
-    const filter = { _id: request.query._id }
+    const filter = { _id: request.params._id }
     const result = await Service.findOne(filter, project, populate);
 
-    if (result && request.tokens.user.type === 'manager') {
-      const ownBranches = result.branches.filter(b => b.branch._id.toString() === request.tokens.user.branch._id);
-      result.branches = ownBranches;
-    }
-
-    return response.status(200).json({ message: 'Menu detail.', payload: result });
+    return response.status(200).json({ message: 'Product detail.', payload: result });
   } catch (error) {
     return response
       .status(500)
@@ -143,9 +101,9 @@ exports.detail = async (request, response, next) => {
 };
 
 /*
-| Edit Menu
+| Edit Product
 */
-exports.edit = async (request, response, next) => {
+exports.edit = async (request, response) => {
   try {
     for (let key in request.body) {
       if (updateFields.findIndex(v => v === key) === -1) {
@@ -155,24 +113,14 @@ exports.edit = async (request, response, next) => {
       };
     }
 
-    const filter = { _id: request.query._id };
+    const filter = { _id: request.params._id };
     const exist = await Service.findOne(filter, '_id');
     if (!exist)
       return response
         .status(ConstantHelper.HttpCodeAndMessage['NOT_FOUND'].code)
         .json({ message: ConstantHelper.HttpCodeAndMessage['NOT_FOUND'].en });
 
-    request.body['updatedBy'] = request.tokens.user._id;
-
     const result = await Service.updateOne(filter, request.body);
-
-    if (request.body.hasOwnProperty('category')) {
-      if (request.body.category !== request.body.oldCategory) {
-        CategoryService.updateOne({ _id: request.body.category }, { $addToSet: { products: request.query._id } }).then(result => console.log('Category updated'));
-
-        CategoryService.updateOne({ _id: request.body.oldCategory }, { $pull: { products: request.query._id } }).then(result => console.log('Category removed'));
-      }
-    }
 
     const res = CommonHelper.formatResponse({ action: 'updateOne', result });
     return response.status(res.status).json({ message: res.message });

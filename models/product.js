@@ -29,21 +29,15 @@ const Modifiers = {
 
 const menuSchema = mongoose.Schema(
   {
-    restaurant: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "restaurant_setting",
-    },
-    group: {type: mongoose.Schema.Types.ObjectId, ref: "menuGroup"},
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "category",
       required: [true, "Category is missing."],
     },
-    sku: { type: String, required: [true, "SKU is missing."] },
     name: { type: String, required: [true, "Name is missing."] },
-    nameLocalized: { type: String, default: "" },
+    maximumPrice: { type: Number, required: [true, "Maximum price is missing"] },
+    sellingPrice: { type: Number, required: [true, "Selling price is missing"] },
     description: { type: String, default: "" },
-    descriptionLocalized: { type: String, default: "" },
     image: { type: String, default: "" },
     coverImage: { type: String, default: "" },
     imageKit: {
@@ -56,18 +50,18 @@ const menuSchema = mongoose.Schema(
       ref: "imagekit",
       default: null,
     },
-    price: { type: Number, required: [true, "Price is missing"] },
-    calories: { type: Number, default: 0 },
-    preparationTime: { type: Number, default: 0 },
-    pricingMethod: { type: Number, enum: [1, 2], default: 1 }, // 1 for Pre set, 2 for Open price
     sellingMethod: { type: Number, enum: [1, 2], default: 1 }, // 1 for Unit, 2 for Weight
     costingMethod: { type: Number, enum: [1, 2], default: 1 }, // 1 for Fixed, 2 for Ingredients
-    modifiers: [Modifiers],
-    branches: [BranchCustomPrice],
-    isActive: { type: Boolean, default: true },
     bestSeller: { type: Boolean, default: false },
-    isReady: { type: Boolean, default: true },
+    inStock: { type: Boolean, default: true },
+    isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    sizes: { type: mongoose.Schema.Types.ObjectId, ref: "size" },
+    colors: { type: mongoose.Schema.Types.ObjectId, ref: "color" },
+    brands: { type: mongoose.Schema.Types.ObjectId, ref: "brand" },
+    coupons: { type: mongoose.Schema.Types.ObjectId, ref: "coupon" },
+    materials: { type: mongoose.Schema.Types.ObjectId, ref: "material" },
+    reviews: { type: mongoose.Schema.Types.ObjectId, ref: "review" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "admin" },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -80,7 +74,6 @@ const menuSchema = mongoose.Schema(
       ref: "admin",
       default: null,
     },
-    logs: { type: String },
   },
   {
     timestamps: true,

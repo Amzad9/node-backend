@@ -34,6 +34,7 @@ app.use(function rootHandler(req, res, next) {
 const adminRoutes = require("./routes/admin");
 const categoryRoutes = require("./routes/category");
 const subCategoryRoutes = require("./routes/subCategory");
+const clothingMaterialRoutes = require("./routes/clothing-material");
 const couponRoutes = require("./routes/coupon");
 const productRoutes = require("./routes/product");
 
@@ -41,6 +42,7 @@ const productRoutes = require("./routes/product");
 app.use("/api/admin", adminRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/subCategory", subCategoryRoutes);
+app.use("/api/material", clothingMaterialRoutes);
 app.use("/api/coupon", couponRoutes);
 app.use("/api/product", productRoutes);
 
