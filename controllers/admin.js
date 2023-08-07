@@ -210,7 +210,7 @@ exports.addUser = async (request, response, next) => {
         .status(ConstantHelper.HttpCodeAndMessage["EXIST"].code)
         .json({ message: "Contact number already exists." });
 
-    request.body["_id"] = new mongoose.roles.ObjectId();
+    request.body["_id"] = new mongoose.Types.ObjectId();
     request.body["password"] = md5(request.body.password);
     request.body["createdBy"] = request.body["_id"];
 
