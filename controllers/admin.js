@@ -13,14 +13,14 @@ const ConstantHelper = require("../helpers/constant");
 const CommonHelper = require("../helpers/common");
 
 const selectFields =
-  "firstName lastName email contact gender type isActive createdAt isDeleted";
+  "firstName lastName email contact gender role isActive createdAt isDeleted";
 const addFields = [
   "firstName",
   "lastName",
   "email",
   "contact",
   "gender",
-  "type",
+  "role",
   "password",
 ];
 const updateFields = [
@@ -28,7 +28,7 @@ const updateFields = [
   "lastName",
   "email",
   "gender",
-  "type",
+  "role",
   "password",
   "isActive",
   "isDeleted",
@@ -42,7 +42,6 @@ const updateFields = [
 exports.getBasicinfo = (request, response, next) => {
   const adminDetails = request.tokens.user;
   const filter = { _id: adminDetails._id };
-  console.log(filter);
   AdminModel.findOne(filter)
     .populate({
       path: "branch",
@@ -67,7 +66,7 @@ exports.getBasicinfo = (request, response, next) => {
       ],
     })
     .select(
-      "restaurantId name email contact dialCode type status createdAt branch settings"
+      "restaurantId name email contact dialCode role status createdAt branch settings"
     )
     .exec()
     .then((user) => {
@@ -135,7 +134,7 @@ exports.login = (request, response) => {
 exports.list = async (request, response, next) => {
   try {
     const filter = {isDeleted: false};
-    // switch (request.tokens.user.type || 'owner') {
+    // switch (request.tokens.user.role || 'owner') {
     //   case "support":
     //     if (request.query.restaurant)
     //       filter["settings"] = request.query.restaurant;
@@ -149,7 +148,7 @@ exports.list = async (request, response, next) => {
     //     filter["_id"] = request.tokens.user.branch._id;
     //     break;
     // }
-    // if (request.query.type) filter["type"] = request.query.type;
+    // if (request.query.role) filter["role"] = request.query.role;
 
     const totalRecords = await AdminService.findAll();
 
@@ -211,7 +210,7 @@ exports.addUser = async (request, response, next) => {
         .status(ConstantHelper.HttpCodeAndMessage["EXIST"].code)
         .json({ message: "Contact number already exists." });
 
-    request.body["_id"] = new mongoose.Types.ObjectId();
+    request.body["_id"] = new mongoose.roles.ObjectId();
     request.body["password"] = md5(request.body.password);
     request.body["createdBy"] = request.body["_id"];
 
