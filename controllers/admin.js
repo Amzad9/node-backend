@@ -43,31 +43,7 @@ exports.getBasicinfo = (request, response, next) => {
   const adminDetails = request.tokens.user;
   const filter = { _id: adminDetails._id };
   AdminModel.findOne(filter)
-    .populate({
-      path: "branch",
-      select: "branchId name",
-    })
-    .populate({
-      path: "settings",
-      populate: [
-        {
-          path: "logo",
-        },
-        {
-          path: "cover",
-        },
-        {
-          path: "coverImages",
-        },
-        {
-          path: "integration",
-          select: "name slug additionalData isActive isDeleted",
-        },
-      ],
-    })
-    .select(
-      "restaurantId name email contact dialCode role status createdAt branch settings"
-    )
+    .select(selectFields)
     .exec()
     .then((user) => {
       if (!user)
