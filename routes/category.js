@@ -5,10 +5,10 @@ const Delete = require("./../middleware/delete");
 
 const router = express.Router();
 
-router.get("/", checkAuth, Controller.list);
-router.get("/:_id", checkAuth, Controller.detail);
-router.post("/", checkAuth, Controller.add);
-router.put("/:_id", checkAuth, Controller.edit);
-router.delete("/:_id", checkAuth, Delete.deleteData, Controller.edit);
+router.get("/", Controller.list);
+router.get("/:_id", Controller.detail);
+router.post("/", Controller.add);
+router.put("/:_id", Controller.edit);
+router.delete("/:_id", Delete.deleteData, Controller.edit);
 
 module.exports = router;
