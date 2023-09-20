@@ -5,7 +5,7 @@ const Delete = require("./../middleware/delete");
 const router = express.Router();
 
 router.get("/", checkAuth, AdminController.list);
-router.post("/", checkAuth, AdminController.addUser);
+router.post("/", AdminController.addUser);
 router.get("/getBasicinfo", checkAuth, AdminController.getBasicinfo);
 router.post("/login", AdminController.login);
 router.get("/:_id", checkAuth, AdminController.userDetail);
