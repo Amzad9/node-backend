@@ -4,21 +4,17 @@ const CategoryService = require("./../service/Category");
 const ConstantHelper = require("./../helpers/constant");
 const CommonHelper = require("./../helpers/common");
 
-const addFields = ['category', 'name', 'maximumPrice', 'sellingPrice', 'description', 'sellingMethod', 'costingMethod', 'bestSeller', 'inStock', 'sizes', 'colors', 'coupons', 'materials', 'brands', 'reviews'];
-const updateFields = ['category', 'name', 'maximumPrice', 'sellingPrice', 'description', 'sellingMethod', 'costingMethod', 'bestSeller', 'inStock', 'sizes', 'colors', 'coupons', 'materials', 'brands', 'reviews', 'image', 'coverImage', 'isActive', 'isDeleted', 'deletedAt', 'deletedBy'];
+const addFields = ['category', 'name', 'images', 'maximumPrice', 'sellingPrice', 'description', 'bestSeller', 'inStock', 'sizes', 'colors', 'discount', 'coupons', 'materials', 'brand', 'reviews'];
+const updateFields = ['category', 'name', 'images', 'maximumPrice', 'sellingPrice', 'description', 'bestSeller', 'inStock', 'sizes', 'colors', 'discount', 'coupons', 'materials', 'brand', 'reviews', 'isActive', 'isDeleted', 'deletedAt', 'deletedBy'];
 
-const project = "category name description image coverImage maximumPrice sellingPrice sellingMethod costingMethod bestSeller inStock sizes colors coupons materials brands reviews isActive isDeleted createdAt";
+const project = "category name images maximumPrice sellingPrice description bestSeller inStock sizes colors discount coupons materials brand reviews isActive isDeleted createdAt";
 const populate = [
   {
     path: "category",
     select: "name",
   },
   {
-    path: "imageKit",
-    select: "imagekit",
-  },
-  {
-    path: "coverImageKit",
+    path: "images",
     select: "imagekit",
   }
 ];
@@ -71,9 +67,11 @@ exports.add = async (request, response) => {
     request.body["_id"] = new mongoose.Types.ObjectId();
 
     const result = await Service.add(request.body);
-    const addedData = await Service.findOne({ _id: result._id }, project, populate);
+    const addedData = await Service.findOne({ _id: result._id }, project);
 
-    CategoryService.updateOne({ _id: request.body.category }, { $addToSet: { products: result._id } }).then(result => console.log('Category updated'));
+    CategoryService.updateOne({ _id: request.body.category }, { $addToSet: { products: result._id } })
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
 
     return response.status(201).json({
       message: "Product created",

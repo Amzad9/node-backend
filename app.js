@@ -16,6 +16,7 @@ const app = express();
 // const db = url;
 const db = process.env.MONGOHOST;
 console.log(db);
+mongoose.set('strictQuery', false)
 mongoose.connect(db, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
