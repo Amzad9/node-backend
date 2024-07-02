@@ -17,17 +17,19 @@ const updateFields = ['name', 'description', 'image', 'isActive', 'isDeleted', '
 /*
   Category List
 */
-exports.list = async (request, response, next) => {
+exports.list = async (request, response) => {
   try {
-    const limit = parseInt(request.query.limit, 10);
-    const skip = limit * (parseInt(request.query.page, 10) - 1);
+    let {limit, page, searchText} = request.query;
+
+    limit = limit ? parseInt(limit, 10) : 10;
+    const skip = limit * (parseInt(page || 1, 10) - 1);
 
     const option = {
       sort: {
         order: 1,
       },
-      limit: limit,
-      skip: skip,
+      limit,
+      skip,
     };
 
     const filter = {
@@ -35,8 +37,7 @@ exports.list = async (request, response, next) => {
     };
     const totalRecords = await Service.findAll(filter);
 
-    if (request.query.searchText)
-      filter["name"] = new RegExp(request.query.searchText, "i");
+    if (searchText) filter["name"] = new RegExp(searchText, "i");
 
     const result = await Service.findAll(filter, selectFields, option, populate);
     return response.status(200).json({ message: "success", payload: result, totalRecords: totalRecords.length });
