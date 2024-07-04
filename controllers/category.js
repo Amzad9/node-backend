@@ -11,7 +11,7 @@ const populate = [
     select: 'name'
   }
 ];
-const addFields = ['name', 'description', 'image'];
+const addFields = ['name', 'description'];
 const updateFields = ['name', 'description', 'image', 'isActive', 'isDeleted', 'deletedAt'];
 
 /*
@@ -26,7 +26,7 @@ exports.list = async (request, response) => {
 
     const option = {
       sort: {
-        order: 1,
+        createdAt: -1,
       },
       limit,
       skip,
@@ -69,6 +69,7 @@ exports.detail = async (request, response, next) => {
 */
 exports.add = async (request, response, next) => {
   try {
+    console.log(request.body);
     for (let key in request.body) {
       if (addFields.findIndex(v => v === key) === -1) {
         return response
