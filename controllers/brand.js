@@ -6,10 +6,10 @@ const ConstantHelper = require("./../helpers/constant");
 
 const selectFields = 'name description isActive createdAt isDeleted';
 const populate = [
-  {
-    path: 'products',
-    select: 'name'
-  }
+  // {
+  //   path: 'products',
+  //   select: 'name'
+  // }
 ];
 const addFields = ['name', 'description'];
 const updateFields = ['name', 'description', 'isActive', 'isDeleted', 'deletedAt'];
