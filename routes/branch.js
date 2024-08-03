@@ -4,9 +4,9 @@ const checkAuth = require("./../middleware/token_verify");
 
 const router = express.Router();
 
-router.get("/", checkAuth, Controller.list);
-router.get("/detail", checkAuth, Controller.detail);
-router.post("/", checkAuth, Controller.add);
-router.put("/", checkAuth, Controller.update);
+router.get("/", Controller.list);
+router.get("/detail", Controller.detail);
+router.post("/", Controller.add);
+router.put("/", Controller.update);
 
 module.exports = router;

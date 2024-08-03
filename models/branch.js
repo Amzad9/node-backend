@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema(
   {
-    restaurant: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "restaurant_setting",
-    },
     name: { type: String, required: [true, "Name required"] },
     nameLocalized: { type: String, default: null },
     reference: { type: String, default: null },
@@ -20,7 +16,7 @@ const Schema = mongoose.Schema(
       latitude: { type: Number, default: 0 },
       longitude: { type: Number, default: 0 },
     },
-    dialCode: { type: String, required: [true, "Dial code required"] },
+    dialCode: { type: String, default: "+91" },
     contact: { type: String, default: null },
     contactName: { type: String, default: null },
     deliveryCharge: { type: mongoose.Schema.Types.Mixed, default: null },
@@ -58,6 +54,6 @@ const Schema = mongoose.Schema(
 
 );
 
-Schema.index({ restaurant: 1, createdAt: -1 });
+Schema.index({ createdAt: -1 });
 
 module.exports = mongoose.model("branch", Schema);

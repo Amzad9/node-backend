@@ -4,9 +4,9 @@ const CommonHelper = require("./../helpers/common");
 const ConstantHelper = require("./../helpers/constant");
 
 const project =
-  "name nameLocalized landmark address location locality city state country pincode dialCode contact contactName deliveryCharge hoursConfiguration deliveryStatus pickupStatus image imageKit minCartAmount maxCashAccepted isActive createdAt";
-const addFields = ['restaurant', 'name', 'nameLocalized', 'address', 'landmark', 'location', 'locality', 'city', 'state', 'country', 'pincode', 'deliveryCharge', 'hoursConfiguration', 'deliveryStatus', 'pickupStatus', 'minCartAmount', 'maxCashAccepted', 'contact', 'contactName', 'dialCode'];
-const updateFields = ['name', 'nameLocalized', 'address', 'landmark', 'location', 'locality', 'city', 'state', 'country', 'pincode', 'deliveryCharge', 'hoursConfiguration', 'deliveryStatus', 'pickupStatus', 'minCartAmount', 'maxCashAccepted', 'contact', 'contactName', 'dialCode', 'isActive', 'isDeleted', 'deletedAt'];
+  "name landmark address location locality city state country pincode contact contactName deliveryCharge hoursConfiguration deliveryStatus pickupStatus image imageKit minCartAmount maxCashAccepted isActive createdAt";
+const addFields = ['name', 'address', 'landmark', 'location', 'locality', 'city', 'state', 'country', 'pincode', 'deliveryCharge', 'hoursConfiguration', 'deliveryStatus', 'pickupStatus', 'minCartAmount', 'maxCashAccepted', 'contact', 'contactName', 'dialCode'];
+const updateFields = ['name', 'address', 'landmark', 'location', 'locality', 'city', 'state', 'country', 'pincode', 'deliveryCharge', 'hoursConfiguration', 'deliveryStatus', 'pickupStatus', 'minCartAmount', 'maxCashAccepted', 'contact', 'contactName', 'dialCode', 'isActive', 'isDeleted', 'deletedAt'];
 
 /**
  * List Branch
@@ -16,46 +16,50 @@ const updateFields = ['name', 'nameLocalized', 'address', 'landmark', 'location'
  */
 exports.list = async (request, response) => {
   try {
+    console.log('Branch');
     const filter = {};
-    switch (request.tokens.user.type) {
-      case 'support':
-        if (request.query.restaurant) filter['restaurant'] = request.query.restaurant;
-        break;
+    // switch (request.tokens.user.type) {
+    //   case 'support':
+    //     if (request.query.restaurant) filter['restaurant'] = request.query.restaurant;
+    //     break;
 
-      case 'owner':
-        filter['restaurant'] = request.tokens.user.settings._id;
-        break;
+    //   case 'owner':
+    //     filter['restaurant'] = request.tokens.user.settings._id;
+    //     break;
 
-      case 'manager':
-        filter['_id'] = request.tokens.user.branch._id;
-        break;
-    }
+    //   case 'manager':
+    //     filter['_id'] = request.tokens.user.branch._id;
+    //     break;
+    // }
 
-    if (request.query.searchText)
-      filter["name"] = new RegExp(request.query.searchText, "i");
 
     const totalRecords = await Service.findAll(filter);
 
-    const option = { sort: { createdAt: -1 } };
+    let {limit, page, searchText} = request.query;
 
-    if (request.query.limit) {
-      option["limit"] = parseInt(request.query.limit, 10);
+    limit = limit ? parseInt(limit, 10) : 10;
+    const skip = limit * (parseInt(page || 1, 10) - 1);
 
-      if (request.query.page)
-        option["skip"] = option["limit"] * (parseInt(request.query.page, 10) - 1);
-    }
+    const option = {
+      sort: {
+        createdAt: -1,
+      },
+      limit,
+      skip,
+    };
+    if (searchText) filter["name"] = new RegExp(searchText, "i");
 
     const populate = [];
-    const populateFields = ['restaurant'];
+    // const populateFields = ['restaurant'];
 
-    if (request.query.hasOwnProperty('include') && request.query.include) {
-      const includeKeys = request.query.include.split(',');
+    // if (request.query.hasOwnProperty('include') && request.query.include) {
+    //   const includeKeys = request.query.include.split(',');
 
-      includeKeys.forEach(key => {
-        const index = populateFields.findIndex(field => field === key);
-        if (index !== -1) populate.push(key);
-      });
-    }
+    //   includeKeys.forEach(key => {
+    //     const index = populateFields.findIndex(field => field === key);
+    //     if (index !== -1) populate.push(key);
+    //   });
+    // }
 
     const result = await Service.findAll(filter, project, option, populate);
     return response
@@ -63,7 +67,7 @@ exports.list = async (request, response) => {
       .json({
         message: "success",
         payload: result,
-        totalRecords: totalRecords.length,
+        totalRecords: searchText ? result.length : totalRecords.length,
       });
   } catch (error) {
     return response
@@ -87,18 +91,18 @@ exports.add = async (request, response, next) => {
       }
     }
 
-    const filter = {};
-    if (request.tokens.user.type === 'support')
-      filter['restaurant'] = request.body.restaurant;
-    else
-      filter['restaurant'] = request.tokens.user.settings._id;
+    // const filter = {};
+    // if (request.tokens.user.type === 'support')
+    //   filter['restaurant'] = request.body.restaurant;
+    // else
+    //   filter['restaurant'] = request.tokens.user.settings._id;
 
-    const totalBranch = await Service.findAll(filter);
+    // const totalBranch = await Service.findAll(filter);
 
     request.body["_id"] = new mongoose.Types.ObjectId();
-    request.body["restaurant"] = filter['restaurant'];
-    request.body["createdBy"] = request.tokens.user._id;
-    request.body["reference"] = "B" + CommonHelper.pad(totalBranch.length + 1, 2);
+    // request.body["restaurant"] = filter['restaurant'];
+    // request.body["createdBy"] = request.tokens.user._id;
+    // request.body["reference"] = "B" + CommonHelper.pad(totalBranch.length + 1, 2);
 
     const result = await Service.add(request.body);
     return response.status(201).json({
