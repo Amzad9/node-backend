@@ -4,9 +4,11 @@ const CommonHelper = require("./../helpers/common");
 const ConstantHelper = require("./../helpers/constant");
 
 const project =
-  "name landmark address location locality city state country pincode contact contactName deliveryCharge hoursConfiguration deliveryStatus pickupStatus image imageKit minCartAmount maxCashAccepted isActive createdAt";
-const addFields = ['name', 'address', 'landmark', 'location', 'locality', 'city', 'state', 'country', 'pincode', 'deliveryCharge', 'hoursConfiguration', 'deliveryStatus', 'pickupStatus', 'minCartAmount', 'maxCashAccepted', 'contact', 'contactName', 'dialCode'];
-const updateFields = ['name', 'address', 'landmark', 'location', 'locality', 'city', 'state', 'country', 'pincode', 'deliveryCharge', 'hoursConfiguration', 'deliveryStatus', 'pickupStatus', 'minCartAmount', 'maxCashAccepted', 'contact', 'contactName', 'dialCode', 'isActive', 'isDeleted', 'deletedAt'];
+  "name address landmark locality city state country pincode location contact contactName deliveryCharge hoursConfiguration deliveryStatus pickupStatus image minCartAmount isActive createdAt";
+
+const addFields = ['name', 'address', 'landmark', 'locality', 'city', 'state', 'country', 'pincode', 'location', 'contact', 'contactName', 'deliveryCharge', 'hoursConfiguration', 'deliveryStatus', 'pickupStatus', 'minCartAmount'];
+
+const updateFields = ['name', 'address', 'landmark', 'locality', 'city', 'state', 'country', 'pincode', 'location', 'contact', 'contactName', 'deliveryCharge', 'hoursConfiguration', 'deliveryStatus', 'pickupStatus', 'minCartAmount', 'isActive', 'isDeleted', 'deletedAt'];
 
 /**
  * List Branch
@@ -16,7 +18,6 @@ const updateFields = ['name', 'address', 'landmark', 'location', 'locality', 'ci
  */
 exports.list = async (request, response) => {
   try {
-    console.log('Branch');
     const filter = {};
     // switch (request.tokens.user.type) {
     //   case 'support':
@@ -31,7 +32,6 @@ exports.list = async (request, response) => {
     //     filter['_id'] = request.tokens.user.branch._id;
     //     break;
     // }
-
 
     const totalRecords = await Service.findAll(filter);
 
@@ -122,13 +122,8 @@ exports.add = async (request, response, next) => {
  */
 exports.detail = async (request, response, next) => {
   try {
-    const filter = { _id: request.query._id };
-    const populate = [
-      {
-        path: 'imageKit',
-        select: 'imagekit'
-      }
-    ]
+    const filter = { _id: request.params._id, isDeleted: false };
+    const populate = []
     const branch = await Service.findOne(filter, project, populate);
 
     const res = CommonHelper.formatResponse({
@@ -159,14 +154,14 @@ exports.update = async (request, response, next) => {
       }
     }
 
-    const filter = { _id: request.query._id };
+    const filter = { _id: request.params._id };
     const exist = await Service.findOne(filter, '_id');
     if (!exist)
       return response
         .status(404)
         .json({ message: "Resource not found." });
 
-    request.body['updatedBy'] = request.tokens.user._id;
+    // request.body['updatedBy'] = request.tokens.user._id;
 
     const result = await Service.updateOne(
       filter,
