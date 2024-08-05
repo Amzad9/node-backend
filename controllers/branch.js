@@ -18,7 +18,7 @@ const updateFields = ['name', 'address', 'landmark', 'locality', 'city', 'state'
  */
 exports.list = async (request, response) => {
   try {
-    const filter = {};
+    const filter = {isDeleted: false};
     // switch (request.tokens.user.type) {
     //   case 'support':
     //     if (request.query.restaurant) filter['restaurant'] = request.query.restaurant;
