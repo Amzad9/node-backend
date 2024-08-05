@@ -33,7 +33,7 @@ exports.list = async (request, response, next) => {
     };
 
     const filter = {
-      // isDeleted: false
+      isDeleted: false
     };
     const totalRecords = await Service.findAll(filter);
 
