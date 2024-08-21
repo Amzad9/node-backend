@@ -40,7 +40,10 @@ exports.list = async (request, response) => {
     if (searchText) filter["name"] = new RegExp(searchText, "i");
 
     const result = await Service.findAll(filter, selectFields, option, populate);
-    return response.status(200).json({ message: "success", payload: result, totalRecords: totalRecords.length });
+    return response.status(200).json({
+      message: "success",
+      payload: result,
+      totalRecords: searchText ? result.length : totalRecords.length });
   } catch (error) {
     return response
       .status(500)
